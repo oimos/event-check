@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const devices = require('puppeteer/DeviceDescriptors');
 const path = require('path');
 const screenshotPath = path.resolve('./img/screenshot/') + '/';
