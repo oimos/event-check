@@ -1,0 +1,9 @@
+{
+  "plugins": {
+    "postcss-preset-env",
+    "postcss-simple-vars",
+    "postcss-css-variables",
+    "postcss-nested",
+    "postcss-flexbugs-fixes"
+  }
+}

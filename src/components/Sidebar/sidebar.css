@@ -1,0 +1,44 @@
+.sidebar {
+  /* background: #eee; */
+}
+
+.over-lay {
+  background: rgba(255, 255, 255, 1);
+}
+
+.slide {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+/* ENTER TRANSITION */
+/* Declare transition start properties*/
+.slide-enter {
+  transform: translateX(-100vw);
+  opacity: 0;
+  position: absolute;
+}
+
+/* Declare transition properties */
+.slide-enter.slide-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 300ms linear 300ms;
+}
+
+/* EXIT TRANSITION */
+.slide-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-exit.slide-exit-active {
+  transform: translateX(100vw);
+  opacity: 0;
+  transition: all 300ms linear
+}
