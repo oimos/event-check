@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs')
-const path = require('path');
+const path = require('path')
+const dir = './dist'
 
 let obj = {
   items: []
@@ -118,6 +119,9 @@ try {
     )
 
     const json  = JSON.stringify(obj)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir)
+    }
     fs.writeFile('dist/event.json', json, 'utf8', function (err) {
       if (err) throw err
       console.log('complete')
