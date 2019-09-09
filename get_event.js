@@ -70,18 +70,9 @@ try {
       listSelector = '.m-mainlist-item-event__placelink'
       await getContentArray(page, listSelector, location)
 
-      const infoArray = [
-        title,
-        startDate,
-        endDate,
-        image,
-        pref,
-        city,
-        location,
-      ]
-
       obj.items = title.map((item, index) => {
         return {
+          id: index,
           title: item,
           startDate: startDate[index],
           endDate: endDate[index],
