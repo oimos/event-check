@@ -6,6 +6,14 @@ let obj = {
   items: []
 };
 
+let title = []
+let startDate = []
+let endDate = []
+let image = []
+let pref = []
+let city = []
+let location = []
+
 try {
   (async () => {
     const browser = await puppeteer.launch({
@@ -16,6 +24,7 @@ try {
     const getContentArray = async (page, selector, array, option) => {
       await page.waitForSelector(selector)
       const contents = await page.$$(selector)
+
       for (let i = 0; i < contents.length; i++) {
         if (option === 'startDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
@@ -33,42 +42,58 @@ try {
     }
 
     const addEventData = async (siteUrl) => {
-      let title = []
-      let startDate = []
-      let endDate = []
-      let image = []
-      let pref = []
-      let city = []
-      let location = []
+      let titleSelector = ''
+      let dateSelector = ''
+      let imageSelector = ''
+      let prefSelector = ''
+      let citySelector = ''
+      let locationSelector = ''
+      let site = ''
+      if (siteUrl.includes('walkerplus')) {
+        site = 'walkerplus'
+      } else if (siteUrl.includes('jalan')) {
+        site = 'jalan'
+      }
+
       // Go to the target page
       await page.goto(siteUrl)
       // Get Site Name
       siteName = await page.evaluate(() => window.location.href)
 
+      if (site === 'walkerplus') {
+        titleSelector = '.m-mainlist__item .m-mainlist-item__ttl > span'
+        dateSelector = '.m-mainlist__item .m-mainlist-item-event__period'
+        imageSelector = '.m-mainlist-item__img > span > img'
+        prefSelector = '.m-mainlist-item__map > .m-mainlist-item__maplink:nth-child(1)'
+        citySelector = '.m-mainlist-item__map > .m-mainlist-item__maplink:nth-child(2)'
+        locationSelector = '.m-mainlist-item-event__placelink'
+      } else if (site === 'jalan') {
+        titleSelector = '.item-listContents .item-name > a'
+        dateSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(1)'
+        imageSelector = '.item-listContents .item-mainImg > img'
+        prefSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(2)'
+        citySelector = '.item-listContents >.item-info > .item-categories'
+        locationSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(2)'
+      }
+
       // Get Event Title Array
-      listSelector = '.m-mainlist__item .m-mainlist-item__ttl > span'
-      await getContentArray(page, listSelector, title)
+      await getContentArray(page, titleSelector, title, null, site)
 
       // Get Event Date
-      listSelector = '.m-mainlist__item .m-mainlist-item-event__period'
-      await getContentArray(page, listSelector, startDate, 'startDate')
-      await getContentArray(page, listSelector, endDate, 'endDate')
+      await getContentArray(page, dateSelector, startDate, 'startDate', site)
+      await getContentArray(page, dateSelector, endDate, 'endDate', site)
 
       // Get Image Url
-      listSelector = '.m-mainlist-item__img > span > img'
-      await getContentArray(page, listSelector, image, 'image')
+      await getContentArray(page, imageSelector, image, 'image', site)
 
       // Get Pref
-      listSelector = '.m-mainlist-item__map > .m-mainlist-item__maplink:nth-child(1)'
-      await getContentArray(page, listSelector, pref)
+      await getContentArray(page, prefSelector, pref, null, site)
 
       // Get City
-      listSelector = '.m-mainlist-item__map > .m-mainlist-item__maplink:nth-child(2)'
-      await getContentArray(page, listSelector, city)
+      await getContentArray(page, citySelector, city, null, site)
 
       // Get Location
-      listSelector = '.m-mainlist-item-event__placelink'
-      await getContentArray(page, listSelector, location)
+      await getContentArray(page, locationSelector, location, null, site)
 
       obj.items = title.map((item, index) => {
         return {
@@ -85,11 +110,15 @@ try {
     }
 
     await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/'
+      'https://www.walkerplus.com/event_list/today/ar0313/',
+    )
+
+    await addEventData (
+      'https://www.jalan.net/event/130000/',
     )
 
     const json  = JSON.stringify(obj)
-    fs.writeFile('event.json', json, 'utf8', function (err) {
+    fs.writeFile('dist/event.json', json, 'utf8', function (err) {
       if (err) throw err
       console.log('complete')
     })

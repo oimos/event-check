@@ -15,6 +15,7 @@ export interface IEventItem {
 
 export const callApi = (URL: string) => {
   return new Promise((resolve, reject) => {
+    console.log(URL)
     fetch(URL)
       .then(res => res.json())
       .then(response => {

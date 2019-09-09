@@ -9,7 +9,7 @@ const App: React.FC = (props: any): any => {
   const [event, setEvent] = useState()
 
   useEffect((): void => {
-    callApi('../../event.json')
+    callApi('/event.json')
       .then((data: IEventItem) => {
         setEvent(data)
         // console.log(event)
