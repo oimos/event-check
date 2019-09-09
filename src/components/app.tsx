@@ -23,7 +23,7 @@ const App: React.FC = (props: any): any => {
         <p>{item.title}</p>
         <p>{item.startDate}</p>
         <p>{item.endDate}</p>
-        <p>{item.image}</p>
+        <p><img src={item.image} title={item.title}/></p>
         <p>{item.pref}</p>
         <p>{item.city}</p>
         <p>{item.location}</p>

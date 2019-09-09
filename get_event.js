@@ -22,17 +22,46 @@ try {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
     const page = await browser.newPage()
-    const getContentArray = async (page, selector, array, option) => {
+    const getContentArray = async (page, selector, array, option, site) => {
       await page.waitForSelector(selector)
       const contents = await page.$$(selector)
 
       for (let i = 0; i < contents.length; i++) {
         if (option === 'startDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
-          array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '').substr(5))
+          if (site === 'walkerplus') {
+            array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '').substr(5))
+          } else if (site === 'jalan') {
+            array.push(await (await contents[i].getProperty('textContent')).jsonValue())
+          }
         } else if (option === 'endDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
-          array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[1])
+          if (site === 'walkerplus') {
+            array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[1])
+          } else if (site === 'jalan') {
+            array.push(await (await contents[i].getProperty('textContent')).jsonValue())
+          }
+        } else if (option === 'city') {
+          const value = await (await contents[i].getProperty('textContent')).jsonValue()
+          if (site === 'walkerplus') {
+            array.push(await (await contents[i].getProperty('textContent')).jsonValue())
+          } else if (site === 'jalan') {
+            array.push(value.replace(/(\n|\t)/gm, ''))
+          }
+        } else if (option === 'pref') {
+          const value = await (await contents[i].getProperty('textContent')).jsonValue()
+          if (site === 'walkerplus') {
+            array.push(await (await contents[i].getProperty('textContent')).jsonValue())
+          } else if (site === 'jalan') {
+            array.push(value.split(/(\s+)/).filter(str => /\S/.test(str))[0])
+          }
+        } else if (option === 'location') {
+          const value = await (await contents[i].getProperty('textContent')).jsonValue()
+          if (site === 'walkerplus') {
+            array.push(await (await contents[i].getProperty('textContent')).jsonValue())
+          } else if (site === 'jalan') {
+            array.push(value.split(/(\s+)/).filter(str => /\S/.test(str))[1].split('（')[0])
+          }
         } else if (option === 'image') {
           const value = await (await contents[i].getProperty('src')).jsonValue()
           array.push(value)
@@ -88,13 +117,13 @@ try {
       await getContentArray(page, imageSelector, image, 'image', site)
 
       // Get Pref
-      await getContentArray(page, prefSelector, pref, null, site)
+      await getContentArray(page, prefSelector, pref, 'pref', site)
 
       // Get City
-      await getContentArray(page, citySelector, city, null, site)
+      await getContentArray(page, citySelector, city, 'city', site)
 
       // Get Location
-      await getContentArray(page, locationSelector, location, null, site)
+      await getContentArray(page, locationSelector, location, 'location', site)
 
       obj.items = title.map((item, index) => {
         return {
