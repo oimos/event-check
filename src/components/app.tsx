@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { callApi, IEventData, IEventItem } from '../utils/api'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Typography from '@material-ui/core/Typography'
 
 interface A<S, T> {
   (x: S): T
@@ -19,15 +24,26 @@ const App: React.FC = (props: any): any => {
 
   function renderItem (item: IEventData) {
     return (
-      <div key={item.id}>
-        <p>{item.title}</p>
-        <p>{item.startDate}</p>
-        <p>{item.endDate}</p>
-        <p><img src={item.image} title={item.title}/></p>
-        <p>{item.pref}</p>
-        <p>{item.city}</p>
-        <p>{item.location}</p>
-      </div>
+      <Card>
+        <CardContent>
+          <div key={item.id}>
+            <Typography>{item.title}</Typography>
+            <Typography>{item.startDate}</Typography>
+            <Typography>{item.endDate}</Typography>
+            <CardMedia
+              style={{ 'height': '140px' }}
+              image={item.image}
+              title={item.title}
+            />
+            <Typography>{item.pref}</Typography>
+            <Typography>{item.city}</Typography>
+            <Typography>{item.location}</Typography>
+            <Button variant="contained" color="primary">
+              Test
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     )
   }
 
