@@ -8,6 +8,7 @@ let obj = {
 };
 
 let title = []
+let link = []
 let startDate = []
 let endDate = []
 let image = []
@@ -65,6 +66,9 @@ try {
         } else if (option === 'image') {
           const value = await (await contents[i].getProperty('src')).jsonValue()
           array.push(value)
+        } else if (option === 'link') {
+          const value = await (await contents[i].getProperty('href')).jsonValue()
+          array.push(value)
         } else {
           array.push(await (await contents[i].getProperty('textContent')).jsonValue())
         }
@@ -72,6 +76,7 @@ try {
     }
 
     const addEventData = async (siteUrl) => {
+      let linkSelector = ''
       let titleSelector = ''
       let dateSelector = ''
       let imageSelector = ''
@@ -91,6 +96,7 @@ try {
       siteName = await page.evaluate(() => window.location.href)
 
       if (site === 'walkerplus') {
+        linkSelector = '.m-mainlist__item .m-mainlist-item__ttl'
         titleSelector = '.m-mainlist__item .m-mainlist-item__ttl > span'
         dateSelector = '.m-mainlist__item .m-mainlist-item-event__period'
         imageSelector = '.m-mainlist-item__img > span > img'
@@ -98,6 +104,7 @@ try {
         citySelector = '.m-mainlist-item__map > .m-mainlist-item__maplink:nth-child(2)'
         locationSelector = '.m-mainlist-item-event__placelink'
       } else if (site === 'jalan') {
+        linkSelector = '.item-listContents .item-name > a'
         titleSelector = '.item-listContents .item-name > a'
         dateSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(1)'
         imageSelector = '.item-listContents .item-mainImg > img'
@@ -108,6 +115,9 @@ try {
 
       // Get Event Title Array
       await getContentArray(page, titleSelector, title, null, site)
+
+      // Get Event Link Array
+      await getContentArray(page, linkSelector, link, 'link', site)
 
       // Get Event Date
       await getContentArray(page, dateSelector, startDate, 'startDate', site)
@@ -129,6 +139,7 @@ try {
         return {
           id: index,
           title: item,
+          link: link[index],
           startDate: startDate[index],
           endDate: endDate[index],
           image: image[index],
@@ -140,12 +151,29 @@ try {
     }
 
     await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/',
+      'https://www.walkerplus.com/event_list/today/ar0313/'
+    )
+    await addEventData (
+      'https://www.walkerplus.com/event_list/today/ar0313/2.html'
+    )
+    await addEventData (
+      'https://www.walkerplus.com/event_list/today/ar0313/3.html'
+    )
+    await addEventData (
+      'https://www.walkerplus.com/event_list/today/ar0313/4.html'
+    )
+    await addEventData (
+      'https://www.walkerplus.com/event_list/today/ar0313/5.html'
     )
 
     await addEventData (
-      'https://www.jalan.net/event/130000/',
+      'https://www.jalan.net/event/130000/'
     )
+
+    await addEventData (
+      'https://www.jalan.net/event/130000/page_2/'
+    )
+
 
     const json  = JSON.stringify(obj)
     if (!fs.existsSync(dir)) {

@@ -1,5 +1,6 @@
 export interface IEventData {
   id: number
+  link: string
   title: string
   startDate: string
   endDate: string
