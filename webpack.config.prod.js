@@ -9,7 +9,7 @@ module.exports = merge(common, {
   mode: 'production',
   devtool: false,
   output: {
-    filename: `${packageJSON.name}-${packageJSON.version}.min.js`,
+    filename: `${packageJSON.name}-${packageJSON.version}.[name].min.js`,
   },
   module: {
     rules: [

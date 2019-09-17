@@ -1,20 +1,34 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs')
-const path = require('path')
+import { formatDate } from './src/utils/formatDate'
+
+import puppeteer from 'puppeteer'
+import fs from 'fs'
+import path from 'path'
 const dir = './dist'
 
-let obj = {
-  items: []
-};
+let obj: {items: any} = {
+  items: [],
+}
 
-let title = []
-let link = []
-let startDate = []
-let endDate = []
-let image = []
-let pref = []
-let city = []
-let location = []
+interface EventDate {
+  id: number,
+  title: string[]
+  link: string[]
+  startDate: string[]
+  endDate: string[]
+  image: string[]
+  pref: string[]
+  city: string[]
+  location: string[]
+}
+
+let title: string[] = []
+let link: string[] = []
+let startDate: string[] = []
+let endDate: string[] = []
+let image: string[] = []
+let pref: string[] = []
+let city: string[] = []
+let location: string[] = []
 
 try {
   (async () => {
@@ -23,7 +37,7 @@ try {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
     const page = await browser.newPage()
-    const getContentArray = async (page, selector, array, option, site) => {
+    const getContentArray = async (page: any, selector: string, array: string[], option: string, site: string) => {
       await page.waitForSelector(selector)
       const contents = await page.$$(selector)
 
@@ -31,7 +45,8 @@ try {
         if (option === 'startDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
-            array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '').substr(5))
+            const date = value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '').substr(5)
+            array.push(date)
           } else if (site === 'jalan') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           }
@@ -43,25 +58,27 @@ try {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           }
         } else if (option === 'city') {
-          const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
-            array.push(value.replace(/(\n|\t)/gm, ''))
+            const value = await contents[i].getProperty('textContent')
+            const v = await value.jsonValue()
+            console.log(v)
+            array.push(v.replace(/(\n|\t|\s|\r)/gm, ''))
           }
         } else if (option === 'pref') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
-            array.push(value.split(/(\s+)/).filter(str => /\S/.test(str))[0])
+            array.push(value.split(/(\s+)/).filter((str: any) => /\S/.test(str))[0])
           }
         } else if (option === 'location') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
-            array.push(value.split(/(\s+)/).filter(str => /\S/.test(str))[1].split('（')[0])
+            array.push(value.split(/(\s+)/).filter((str: any) => /\S/.test(str))[1].split('（')[0])
           }
         } else if (option === 'image') {
           const value = await (await contents[i].getProperty('src')).jsonValue()
@@ -75,7 +92,7 @@ try {
       }
     }
 
-    const addEventData = async (siteUrl) => {
+    const addEventData = async (siteUrl: string) => {
       let linkSelector = ''
       let titleSelector = ''
       let dateSelector = ''
@@ -93,7 +110,7 @@ try {
       // Go to the target page
       await page.goto(siteUrl)
       // Get Site Name
-      siteName = await page.evaluate(() => window.location.href)
+      // const siteName = await page.evaluate(() => window.location.href)
 
       if (site === 'walkerplus') {
         linkSelector = '.m-mainlist__item .m-mainlist-item__ttl'
@@ -121,6 +138,7 @@ try {
 
       // Get Event Date
       await getContentArray(page, dateSelector, startDate, 'startDate', site)
+
       await getContentArray(page, dateSelector, endDate, 'endDate', site)
 
       // Get Image Url
@@ -145,37 +163,40 @@ try {
           image: image[index],
           pref: pref[index],
           city: city[index],
-          location: location[index]
+          location: location[index],
         }
       })
     }
 
-    await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/'
-    )
-    await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/2.html'
-    )
-    await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/3.html'
-    )
-    await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/4.html'
-    )
-    await addEventData (
-      'https://www.walkerplus.com/event_list/today/ar0313/5.html'
+    await addEventData(
+      'https://www.walkerplus.com/event_list/today/ar0313/',
     )
 
-    await addEventData (
-      'https://www.jalan.net/event/130000/'
+    await addEventData(
+      'https://www.walkerplus.com/event_list/today/ar0313/2.html',
     )
 
-    await addEventData (
-      'https://www.jalan.net/event/130000/page_2/'
+    await addEventData(
+      'https://www.walkerplus.com/event_list/today/ar0313/3.html',
     )
 
+    await addEventData(
+      'https://www.walkerplus.com/event_list/today/ar0313/4.html',
+    )
 
-    const json  = JSON.stringify(obj)
+    await addEventData(
+      'https://www.walkerplus.com/event_list/today/ar0313/5.html',
+    )
+
+    await addEventData(
+      'https://www.jalan.net/event/130000/',
+    )
+
+    await addEventData(
+      'https://www.jalan.net/event/130000/page_2/',
+    )
+
+    const json = JSON.stringify(obj)
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
     }
@@ -185,7 +206,7 @@ try {
     })
 
     await browser.close()
-  })()
-} catch(err) {
+  })().catch(e => console.log(e))
+} catch (err) {
   console.error(err)
 }
