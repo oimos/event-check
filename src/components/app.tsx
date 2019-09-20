@@ -8,6 +8,7 @@ import ButtonBase from '@material-ui/core/ButtonBase'
 import blue from '@material-ui/core/colors/blue'
 import { compareUp, compareDown } from '../utils/compare'
 import CompareArrowsIcon from '@material-ui/Icons/CompareArrows'
+import styles from './styles.css'
 
 interface A<S, T> {
   (x: S): T
@@ -38,15 +39,25 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const App: React.FC = (props: any): any => {
   const [event, setEvent] = useState()
+  const [order, setOrder] = useState(false)
 
   useEffect((): void => {
     callApi('/event.json')
       .then((data: IEventItem) => {
-        console.log(data.items.sort(compareUp))
         setEvent(data)
+        setOrder(false)
       })
       .catch(err => console.error(err))
   }, [])
+
+  function toggleOrder () {
+    const currentState = event
+    const reOrderedItems = {
+      items: order === true ? currentState.items.sort(compareDown) : currentState.items.sort(compareUp),
+    }
+    setEvent(reOrderedItems)
+    setOrder(!order)
+  }
 
   const theme = createMuiTheme({
     palette: {
@@ -99,9 +110,9 @@ const App: React.FC = (props: any): any => {
 
   return (
     <>
-      <Paper className={classes.paper}>
+      <Paper className={[classes.paper, styles.header].join(' ')}>
         <Typography variant="h6" component="h6">
-          都内のイベント情報 <span style={{ 'transform': 'rotate(45deg)' }}><CompareArrowsIcon /></span>
+          都内のイベント情報 <span onClick={toggleOrder} className={styles.toggleButton}><CompareArrowsIcon /></span>
         </Typography>
       </Paper>
       {

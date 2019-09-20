@@ -1,0 +1,17 @@
+.header {
+  position: relative
+}
+
+.toggleButton {
+  transform: rotate(90deg);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
