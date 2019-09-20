@@ -16,9 +16,9 @@ const createBanner = () => {
 
 module.exports = {
   mode: 'production',
-  entry: './get_events.ts',
+  entry: './server/src/get_events.ts',
   output: {
-    path: path.resolve(__dirname, './'),
+    path: path.resolve(__dirname, 'server/dist'),
     filename: 'get_events.js'
   },
   module: {

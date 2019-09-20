@@ -1,12 +1,13 @@
 import puppeteer from 'puppeteer'
 import path from 'path'
 import fs from 'fs'
-import { formatDate } from './src/utils/formatDate'
+import { formatDate } from './utils/formatDate'
 
 interface EventDate {
   id: number,
   title: string[]
   link: string[]
+  dateNumber: string[]
   startDate: string[]
   endDate: string[]
   image: string[]
@@ -23,6 +24,7 @@ let obj: {items: any} = {
 
 let title: string[] = []
 let link: string[] = []
+let dateNumber: string[] = []
 let startDate: string[] = []
 let endDate: string[] = []
 let image: string[] = []
@@ -55,8 +57,15 @@ try {
           if (site === 'walkerplus') {
             array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[1])
           } else if (site === 'jalan') {
+            array.push(value)
+          }
+        } else if (option === 'dateNumber') {
+          const value = await (await contents[i].getProperty('textContent')).jsonValue()
+          if (site === 'walkerplus') {
+            const date = await value.replace(/(\r\n|\n|\r|\s)/gm, '')
+            array.push(formatDate(date))
+          } else if (site === 'jalan') {
             array.push(formatDate(value))
-            // array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           }
         } else if (option === 'city') {
           if (site === 'walkerplus') {
@@ -140,6 +149,8 @@ try {
 
       await getContentArray(page, dateSelector, endDate, 'endDate', site)
 
+      await getContentArray(page, dateSelector, dateNumber, 'dateNumber', site)
+
       // Get Image Url
       await getContentArray(page, imageSelector, image, 'image', site)
 
@@ -152,13 +163,14 @@ try {
       // Get Location
       await getContentArray(page, locationSelector, location, 'location', site)
 
-      console.log('title', title)
+      // console.log('title', title)
 
       obj.items = title && title.map((item, index) => {
         return {
           id: index,
           title: item,
           link: link[index],
+          dateNumber: dateNumber[index],
           startDate: startDate[index],
           endDate: endDate[index],
           image: image[index],

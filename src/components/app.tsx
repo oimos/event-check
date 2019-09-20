@@ -6,6 +6,8 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import blue from '@material-ui/core/colors/blue'
+import { compareUp, compareDown } from '../utils/compare'
+import CompareArrowsIcon from '@material-ui/Icons/CompareArrows'
 
 interface A<S, T> {
   (x: S): T
@@ -40,8 +42,8 @@ const App: React.FC = (props: any): any => {
   useEffect((): void => {
     callApi('/event.json')
       .then((data: IEventItem) => {
+        console.log(data.items.sort(compareUp))
         setEvent(data)
-        // console.log(event)
       })
       .catch(err => console.error(err))
   }, [])
@@ -60,7 +62,7 @@ const App: React.FC = (props: any): any => {
     return (
       <a key={item.id} className={classes.root} href={item.link} style={{ 'textDecoration': 'none', 'lineHeight': 1.2 }}>
         <Paper className={classes.paper} key={item.id}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} wrap="nowrap">
             <Grid item>
               <ButtonBase className={classes.image}>
                 <img className={classes.img} alt="complex" src={item.image} />
@@ -97,9 +99,11 @@ const App: React.FC = (props: any): any => {
 
   return (
     <>
-      <Typography variant="h6" component="h6">
-        都内のイベント情報
-      </Typography>
+      <Paper className={classes.paper}>
+        <Typography variant="h6" component="h6">
+          都内のイベント情報 <span style={{ 'transform': 'rotate(45deg)' }}><CompareArrowsIcon /></span>
+        </Typography>
+      </Paper>
       {
         event && event.items.map(
           (item: IEventData) => {

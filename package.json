@@ -15,6 +15,7 @@
     "dev": "run-p build:dev typing",
     "test": "jest --verbose --runInBand --no-cache --config",
     "test:util": "TS_NODE_PROJECT='./tsconfig.testing.json' mocha -r ts-node/register ./src/utils/__tests__/*.test.ts",
+    "test:server:util": "TS_NODE_PROJECT='./tsconfig.testing.json' mocha -r ts-node/register ./server/src/utils/__tests__/*.test.ts",
     "lint": "tslint -c ./tslint.json --project ./ 'src/**/*/.ts*'"
   },
   "husky": {
@@ -94,6 +95,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.4.1",
+    "@material-ui/icons": "^4.4.1",
     "@react-google-maps/api": "^1.6.0",
     "@types/react-sidebar": "^3.0.0",
     "@types/react-transition-group": "^4.2.2",
