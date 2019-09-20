@@ -1,7 +1,7 @@
 {
-  "name": "check-event",
+  "name": "event-check",
   "version": "1.0.0",
-  "description": "",
+  "description": "This app is scraping multiple sites and generates a json file. Then React renders the data to the view.",
   "main": "index.js",
   "scripts": {
     "preinstall": "$npm_execpath --silent run checkyarn",
