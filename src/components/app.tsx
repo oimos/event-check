@@ -6,8 +6,8 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import blue from '@material-ui/core/colors/blue'
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 import { compareUp, compareDown } from '../utils/compare'
-import CompareArrowsIcon from '@material-ui/Icons/CompareArrows'
 import styles from './styles.css'
 
 interface A<S, T> {
