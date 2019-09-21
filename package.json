@@ -49,6 +49,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "chai": "^4.2.0",
+    "copy-webpack-plugin": "^5.0.4",
     "css-loader": "1.0.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",

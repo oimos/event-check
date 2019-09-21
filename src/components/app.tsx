@@ -178,3 +178,5 @@ const App: React.FC = (props: any): any => {
 }
 
 export default App
+
+// https://itnext.io/an-alternative-to-google-geocoder-api-in-node-js-78728c7b9faa
