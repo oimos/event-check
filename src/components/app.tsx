@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { callApi, IEventData, IEventItem } from '../utils/api'
 import { makeStyles, createStyles, Theme, createMuiTheme } from '@material-ui/core/styles'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -8,6 +10,7 @@ import ButtonBase from '@material-ui/core/ButtonBase'
 import blue from '@material-ui/core/colors/blue'
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 import { compareUp, compareDown } from '../utils/compare'
+import GoogleMapReact, { MapOptions, Maps } from 'google-map-react'
 import styles from './styles.css'
 
 interface A<S, T> {
@@ -34,20 +37,29 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: '100%',
       maxHeight: '100%',
     },
+    progress: {
+      margin: theme.spacing(2),
+    },
   }),
 )
 
 const App: React.FC = (props: any): any => {
   const [event, setEvent] = useState()
   const [order, setOrder] = useState(false)
+  const [loading, setLoading] = useState(false)
+  console.log('loading', loading)
 
   useEffect((): void => {
     callApi('/event.json')
       .then((data: IEventItem) => {
         setEvent(data)
         setOrder(false)
+        setLoading(true)
       })
-      .catch(err => console.error(err))
+      .catch(err => {
+        setLoading(false)
+        console.error(err)
+      })
   }, [])
 
   function toggleOrder () {
@@ -108,21 +120,60 @@ const App: React.FC = (props: any): any => {
     )
   }
 
-  return (
-    <>
+  function Index () {
+    return <>
       <Paper className={[classes.paper, styles.header].join(' ')}>
         <Typography variant="h6" component="h6">
           都内のイベント情報 <span onClick={toggleOrder} className={styles.toggleButton}><CompareArrowsIcon /></span>
         </Typography>
       </Paper>
       {
-        event && event.items.map(
-          (item: IEventData) => {
-            return renderItem(item)
-          },
-        )
+        loading
+          ? event && event.items.map(
+              (item: IEventData) => {
+                return renderItem(item)
+              },
+            )
+          : <div className={styles.textCenter}>
+              <Paper className={[classes.paper, styles.noBoxShadow].join(' ')}>
+                <CircularProgress className={classes.progress} />
+              </Paper>
+            </div>
       }
     </>
+  }
+
+  function Map () {
+    return <>
+      <div style={{
+        'height': '100vh',
+        'width': '100%',
+      }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{
+            key: `${process.env.GOOGLE_MAP_API}`,
+          }}
+          defaultCenter={{
+            lat: 35.6762,
+            lng: 139.6503,
+          }}
+          defaultZoom={12}
+        >
+          <Marker lat={35.6762} lng={139.6503} />
+        </GoogleMapReact>
+      </div>
+    </>
+  }
+
+  function Marker (props: any) {
+    return <div className="SuperAwesomePin">1</div>
+  }
+
+  return (
+    <Router>
+      <Route path="/" exact component={Index} />
+      <Route path="/map/" exact component={Map} />
+    </Router>
   )
 }
 

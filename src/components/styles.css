@@ -15,3 +15,11 @@
   align-items: center;
   justify-content: center;
 }
+
+.noBoxShadow {
+  box-shadow: none !important;
+}
+
+.textCenter {
+  text-align: center;
+}

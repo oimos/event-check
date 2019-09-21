@@ -106,6 +106,7 @@ module.exports = {
         'FBASE_PROJECT_ID': JSON.stringify(process.env.FBASE_PROJECT_ID),
         'FBASE_STORAGE_BUCKET': JSON.stringify(process.env.FBASE_STORAGE_BUCKET),
         'FBASE_MESSAGING_SENDER_ID': JSON.stringify(process.env.FBASE_MESSAGING_SENDER_ID),
+        'GOOGLE_MAP_API': JSON.stringify(process.env.GOOGLE_MAP_API),
       }
     })
   ],

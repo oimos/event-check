@@ -51,6 +51,9 @@ try {
             array.push(date)
           } else if (site === 'jalan') {
             array.push(value)
+          } else if (site === 'enjoy') {
+            const date = value.replace(/(\n|\r|\s)/gm, '').split('～')[0]
+            array.push(date)
           }
         } else if (option === 'endDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
@@ -58,17 +61,19 @@ try {
             array.push(value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[1])
           } else if (site === 'jalan') {
             array.push(value)
+          } else if (site === 'enjoy') {
+            array.push(value.replace(/(\n|\r|\s)/gm, '').split('～')[1])
           }
         } else if (option === 'dateNumber') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
             const date = await value.replace(/(\r\n|\n|\r|\s)/gm, '')
             array.push(formatDate(date))
-          } else if (site === 'jalan') {
+          } else if (site === 'jalan' || site === 'enjoy') {
             array.push(formatDate(value))
           }
         } else if (option === 'city') {
-          if (site === 'walkerplus') {
+          if (site === 'walkerplus' || site === 'enjoy') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
             const value = await (await contents[i].getProperty('textContent')).jsonValue()
@@ -80,10 +85,12 @@ try {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
             array.push(value.split(/(\s+)/).filter((str: any) => /\S/.test(str))[0])
+          } else if (site === 'enjoy') {
+            array.push('東京都') // The site shows info only in Tokyo
           }
         } else if (option === 'location') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
-          if (site === 'walkerplus') {
+          if (site === 'walkerplus' || site === 'enjoy') {
             array.push(await (await contents[i].getProperty('textContent')).jsonValue())
           } else if (site === 'jalan') {
             array.push(value.split(/(\s+)/).filter((str: any) => /\S/.test(str))[1].split('（')[0])
@@ -113,6 +120,8 @@ try {
         site = 'walkerplus'
       } else if (siteUrl.includes('jalan')) {
         site = 'jalan'
+      } else if (siteUrl.includes('enjoytokyo')) {
+        site = 'enjoy'
       }
 
       // Go to the target page
@@ -136,6 +145,14 @@ try {
         prefSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(2)'
         citySelector = '.item-listContents >.item-info > .item-categories'
         locationSelector = '.item-listContents .item-eventInfo > dd:nth-of-type(2)'
+      } else if (site === 'enjoy') {
+        linkSelector = 'div.rl_header > h2 > span > a'
+        titleSelector = 'div.rl_header > h2 > span > a'
+        dateSelector = '.rl_date'
+        imageSelector = 'div.rl_main > div.rl_img.photo > a > img'
+        prefSelector = '#frn-criteria-area > ul > li:nth-child(1) > h3'
+        citySelector = 'div.rl_main > ul > li > p.rl_shop_access'
+        locationSelector = 'div.rl_main > ul > li > p.clfix > span > a'
       }
 
       // Get Event Title Array
@@ -207,6 +224,10 @@ try {
 
     await addEventData(
       'https://www.jalan.net/event/130000/page_2/',
+    )
+
+    await addEventData(
+      'https://www.enjoytokyo.jp/search/event/tomorrow/',
     )
 
     const json = JSON.stringify(obj)
