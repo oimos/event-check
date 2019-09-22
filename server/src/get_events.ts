@@ -47,7 +47,7 @@ try {
         if (option === 'startDate') {
           const value = await (await contents[i].getProperty('textContent')).jsonValue()
           if (site === 'walkerplus') {
-            const date = value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '').substr(5)
+            const date = value.replace(/(\r\n|\n|\r|\s)/gm, '').split('～')[0].replace(/開催中|終了間近/g, '')
             array.push(date)
           } else if (site === 'jalan') {
             array.push(value)

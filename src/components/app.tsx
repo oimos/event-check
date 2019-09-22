@@ -7,11 +7,28 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import ButtonBase from '@material-ui/core/ButtonBase'
+import CardActions from '@material-ui/core/CardActions'
+import IconButton from '@material-ui/core/IconButton'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import blue from '@material-ui/core/colors/blue'
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 import { compareUp, compareDown } from '../utils/compare'
 import GoogleMapReact, { MapOptions, Maps } from 'google-map-react'
 import styles from './styles.css'
+
+import withFirebaseAuth from 'react-with-firebase-auth'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'firebase/database'
+import firebaseConfig from '../firebaseConfig'
+
+const firebaseApp = firebase.initializeApp(firebaseConfig)
+const firebaseAppAuth = firebaseApp.auth()
+const providers = {
+  googleProvider: new firebase.auth.GoogleAuthProvider(),
+}
+const database = firebase.firestore()
 
 interface A<S, T> {
   (x: S): T
@@ -71,6 +88,15 @@ const App: React.FC = (props: any): any => {
     setOrder(!order)
   }
 
+  function postData (uid: string) {
+    return database.collection('publicDocs').doc('shinjo').set({
+      born: 197321,
+      part: 'drum',
+      alive: true,
+      reviewerID: uid,
+    }, { merge: true })
+  }
+
   const theme = createMuiTheme({
     palette: {
       primary: blue,
@@ -83,8 +109,8 @@ const App: React.FC = (props: any): any => {
       ? `${item.startDate}`
       : `${item.startDate} - ${item.endDate}`
     return (
-      <a key={item.id} className={classes.root} href={item.link} style={{ 'textDecoration': 'none', 'lineHeight': 1.2 }}>
-        <Paper className={classes.paper} key={item.id}>
+      <Paper className={classes.paper} key={item.id}>
+        <a key={item.id} className={classes.root} href={item.link} style={{ 'textDecoration': 'none', 'lineHeight': 1.2, 'color': 'inherit' }}>
           <Grid container spacing={2} wrap="nowrap">
             <Grid item>
               <ButtonBase className={classes.image}>
@@ -115,18 +141,39 @@ const App: React.FC = (props: any): any => {
               </Grid>
             </Grid>
           </Grid>
-        </Paper>
-      </a>
+        </a>
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites">
+            <FavoriteIcon />
+          </IconButton>
+        </CardActions>
+      </Paper>
     )
   }
 
   function Index () {
+    const {
+      user,
+      signOut,
+      signInWithGoogle,
+    } = props
+
     return <>
       <Paper className={[classes.paper, styles.header].join(' ')}>
         <Typography variant="h6" component="h6">
           都内のイベント情報 <span onClick={toggleOrder} className={styles.toggleButton}><CompareArrowsIcon /></span>
         </Typography>
       </Paper>
+      {
+        user
+          ? <p>Hello, {user.displayName}</p>
+          : <p>Please sign in.</p>
+      }
+      {
+        user
+          ? <button onClick={signOut}>Sign out</button>
+          : <button onClick={signInWithGoogle}>Sign in with Google</button>
+      }s
       {
         loading
           ? event && event.items.map(
@@ -177,6 +224,13 @@ const App: React.FC = (props: any): any => {
   )
 }
 
-export default App
+// export default App
+
+const WrappedApp = withFirebaseAuth({
+  providers,
+  firebaseAppAuth,
+})(App)
+
+export default WrappedApp
 
 // https://itnext.io/an-alternative-to-google-geocoder-api-in-node-js-78728c7b9faa
