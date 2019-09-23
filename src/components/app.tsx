@@ -158,6 +158,17 @@ const App: React.FC = (props: any): any => {
       signInWithGoogle,
     } = props
 
+    if (user != null) {
+      console.log(user.providerData[0].photoURL)
+      user.providerData.forEach(function (profile: any) {
+        console.log('Sign-in provider: ' + profile.providerId)
+        console.log('  Provider-specific UID: ' + profile.uid)
+        console.log('  Name: ' + profile.displayName)
+        console.log('  Email: ' + profile.email)
+        console.log('  Photo URL: ' + profile.photoURL)
+      })
+    }
+
     return <>
       <Paper className={[classes.paper, styles.header].join(' ')}>
         <Typography variant="h6" component="h6">
@@ -166,14 +177,14 @@ const App: React.FC = (props: any): any => {
       </Paper>
       {
         user
-          ? <p>Hello, {user.displayName}</p>
+          ? <p>Hello, {user.displayName} <img width="20" height="20" src={user.providerData[0].photoURL} /></p>
           : <p>Please sign in.</p>
       }
       {
         user
           ? <button onClick={signOut}>Sign out</button>
           : <button onClick={signInWithGoogle}>Sign in with Google</button>
-      }s
+      }
       {
         loading
           ? event && event.items.map(

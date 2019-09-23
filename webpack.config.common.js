@@ -88,13 +88,6 @@ module.exports = {
     new webpack.BannerPlugin({
       banner: createBanner(),
     }),
-    new HtmlWebpackPlugin({
-      title: 'hello',
-      inject: 'body',
-      hash: true,
-      template: path.resolve(__dirname, 'src/template/index.html'),
-      filename: path.resolve(__dirname, 'dist/index.html'),
-    }),
     new WebpackBuildNotifierPlugin(),
     new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
     new webpack.DefinePlugin({
