@@ -1,0 +1,7 @@
+.noBoxShadow {
+  box-shadow: none !important;
+}
+
+.textCenter {
+  text-align: center;
+}

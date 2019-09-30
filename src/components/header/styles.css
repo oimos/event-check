@@ -4,7 +4,6 @@
 
 .toggleButton {
   transform: rotate(90deg);
-  position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
@@ -16,10 +15,14 @@
   justify-content: center;
 }
 
-.noBoxShadow {
-  box-shadow: none !important;
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.textCenter {
-  text-align: center;
+.userWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
